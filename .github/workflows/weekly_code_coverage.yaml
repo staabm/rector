@@ -42,9 +42,7 @@ jobs:
                     php-version: 7.4
                     coverage: xdebug
 
-
-            -
-                run: composer install --no-progress --ansi
+            -   uses: "ramsey/composer-install@v1"
 
             -
                 run: ${{ matrix.actions.run }}

@@ -22,7 +22,9 @@ jobs:
                 env:
                     COMPOSER_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
-            - run: bin/rector process --config ci/downgrade/rector-downgrade-to-php71.php
+            -   uses: "ramsey/composer-install@v1"
+
+            -   run: bin/rector process --config ci/downgrade/rector-downgrade-to-php71.php
 
             # 1. prepare dependencies
             #-   run: sh build-rector-scoped.sh
