@@ -40,6 +40,11 @@ final class NewToMethodCall
         return new ObjectType($this->serviceType);
     }
 
+    public function getServiceObjectType(): ObjectType
+    {
+        return new ObjectType($this->serviceType);
+    }
+
     public function getServiceMethod(): string
     {
         return $this->serviceMethod;

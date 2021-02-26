@@ -42,14 +42,6 @@ final class RouterListToControllerAnnotationsRector extends AbstractRector
     private const ACTION_RENDER_NAME_MATCHING_REGEX = '#^(action|render)(?<short_action_name>.*?$)#sm';
 
     /**
-     * Package "nette/application" is required for DEV, might not exist for PROD.
-     * So access the class throgh the string
-     *
-     * @var string
-     */
-    private const ROUTE_LIST_CLASS = 'Nette\Application\Routers\RouteList';
-
-    /**
      * @var RouteInfoFactory
      */
     private $routeInfoFactory;
@@ -84,6 +76,16 @@ final class RouterListToControllerAnnotationsRector extends AbstractRector
      */
     private $privatesCaller;
 
+    /**
+     * @var ObjectType[]
+     */
+    private $routeObjectTypes = [];
+
+    /**
+     * @var ObjectType
+     */
+    private $routeListObjectType;
+
     public function __construct(
         ExplicitRouteAnnotationDecorator $explicitRouteAnnotationDecorator,
         ReturnTypeInferer $returnTypeInferer,
@@ -104,6 +106,13 @@ final class RouterListToControllerAnnotationsRector extends AbstractRector
 
         $this->reflectionProvider = $reflectionProvider;
         $this->privatesCaller = $privatesCaller;
+
+        $this->routeObjectTypes = [
+            new ObjectType('Nette\Application\IRouter'),
+            new ObjectType('Nette\Routing\Router'),
+        ];
+
+        $this->routeListObjectType = new ObjectType('Nette\Application\Routers\RouteList');
     }
 
     public function getRuleDefinition(): RuleDefinition
@@ -177,16 +186,12 @@ CODE_SAMPLE
      */
     public function refactor(Node $node): ?Node
     {
-        if ($node->stmts === null) {
-            return null;
-        }
         if ($node->stmts === []) {
             return null;
         }
-        $inferedReturnType = $this->returnTypeInferer->inferFunctionLike($node);
 
-        $routeListObjectType = new ObjectType(self::ROUTE_LIST_CLASS);
-        if (! $inferedReturnType->isSuperTypeOf($routeListObjectType)->yes()) {
+        $inferedReturnType = $this->returnTypeInferer->inferFunctionLike($node);
+        if (! $inferedReturnType->isSuperTypeOf($this->routeListObjectType)->yes()) {
             return null;
         }
 

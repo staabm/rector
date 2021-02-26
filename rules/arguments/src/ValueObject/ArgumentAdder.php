@@ -69,6 +69,11 @@ final class ArgumentAdder
         return new ObjectType($this->class);
     }
 
+    public function getObjectType(): ObjectType
+    {
+        return new ObjectType($this->class);
+    }
+
     public function getMethod(): string
     {
         return $this->method;

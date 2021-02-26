@@ -105,13 +105,21 @@ CODE_SAMPLE
 
             /** @var Class_ $classNode */
             $classNode = $node->getAttribute(AttributeKey::CLASS_NODE);
-            $propertyName = $this->getExistingFactoryPropertyName($classNode, $serviceObjectType);
+
+            $propertyName = $this->getExistingFactoryPropertyName($classNode, $newToMethodCall->getServiceObjectType());
 
             if ($propertyName === null) {
-                $propertyName = $this->classNaming->getShortName($serviceObjectType->getClassName());
+                $propertyName = $this->classNaming->getShortName(
+                    $newToMethodCall->getServiceObjectType()
+                        ->getClassName()
+                );
                 $propertyName = lcfirst($propertyName);
 
-                $this->addConstructorDependencyToClass($classNode, $serviceObjectType, $propertyName);
+                $this->addConstructorDependencyToClass(
+                    $classNode,
+                    $newToMethodCall->getServiceObjectType(),
+                    $propertyName
+                );
             }
 
             $propertyFetch = new PropertyFetch(new Variable('this'), $propertyName);
